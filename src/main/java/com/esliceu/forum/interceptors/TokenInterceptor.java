@@ -29,7 +29,8 @@ public class TokenInterceptor implements HandlerInterceptor {
         try {
             email = tokenService.verifyAndGetEmailFromToken(tok);
         }catch (JWTDecodeException jwtDecodeException){
-
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return false;
         }
         return true;
     }

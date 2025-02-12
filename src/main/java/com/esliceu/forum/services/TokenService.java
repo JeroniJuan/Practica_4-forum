@@ -14,9 +14,10 @@ public class TokenService {
 
     @Value("${token.expiration.time}")
     long tokenExpirationTime;
-    public String buildToken(String email){
+
+    public String buildToken(String s){
         return JWT.create()
-                .withSubject(email)
+                .withSubject(s)
                 .withExpiresAt(new Date(System.currentTimeMillis() + tokenExpirationTime))
                 .sign(Algorithm.HMAC512(secret.getBytes()));
     }
