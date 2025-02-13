@@ -2,6 +2,7 @@ package com.esliceu.forum.services;
 
 import com.esliceu.forum.forms.LoginForm;
 import com.esliceu.forum.forms.RegisterForm;
+import com.esliceu.forum.models.Permission;
 import com.esliceu.forum.models.User;
 import com.esliceu.forum.repos.UserRepo;
 import com.esliceu.forum.utils.Utils;
@@ -14,6 +15,8 @@ import java.security.NoSuchAlgorithmException;
 public class UserService {
     @Autowired
     UserRepo userRepo;
+    @Autowired
+    PermissionService permissionService;
 
     public boolean userAutorized(LoginForm loginForm) throws NoSuchAlgorithmException {
         User user = userRepo.findByUserEmail(loginForm.email());
@@ -21,6 +24,7 @@ public class UserService {
     }
 
     public boolean register(RegisterForm registerForm) throws NoSuchAlgorithmException {
+        if (registerForm.email() == null) return false;
         User user = new User();
         user.setUserName(registerForm.name());
         user.setUserEmail(registerForm.email());
@@ -30,9 +34,20 @@ public class UserService {
             user.setModerateCategory(registerForm.moderateCategory());
         }
         userRepo.save(user);
+        Permission permission = new Permission();
+        permission.setUser(userRepo.findByUserEmail(registerForm.email()));
+        if (registerForm.role().equals("admin")){
+            String[] adminPermissions = {"own_topics:write", "own_topics:delete", "own_replies:write", "own_replies:delete", "categories:write", "categories:delete"};
+            permission.setRoot(adminPermissions);
+            permissionService.save(permission);
+        }
         return true;
     }
     public User findByUserEmail(String email){
         return userRepo.findByUserEmail(email);
+    }
+
+    public void save(User user){
+        userRepo.save(user);
     }
 }

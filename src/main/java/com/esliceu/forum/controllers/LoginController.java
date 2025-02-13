@@ -29,7 +29,6 @@ public class LoginController {
             String token = tokenService.buildToken(loginForm.email());
             response.put("user", user);
             response.put("token", token);
-            System.out.println("Token = " + token);
             return response;
         }
         System.out.println("False");

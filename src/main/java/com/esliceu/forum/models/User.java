@@ -21,6 +21,9 @@ public class User {
     @Column(name = "user_role")
     String userRole;
 
+    @Column(name = "avatar_url")
+    String avatarUrl;
+
     @Column(name = "moderate_Category")
     String moderateCategory;
 
@@ -70,5 +73,13 @@ public class User {
 
     public void setModerateCategory(String moderateCategory) {
         this.moderateCategory = moderateCategory;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 }
