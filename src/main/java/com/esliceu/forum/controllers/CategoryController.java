@@ -18,7 +18,7 @@ public class CategoryController {
     public List<Category> getCategories(){
         return categoriesService.findAll();
     }
-
+    // a
     @CrossOrigin
     @PostMapping("/categories")
     public void postCategory(@RequestBody CategoryForm categoryForm){
