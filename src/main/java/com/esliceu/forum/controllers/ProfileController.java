@@ -42,7 +42,7 @@ public class ProfileController {
         resp.put("role", user.getUserRole());
         resp.put("id", user.getId());
         resp.put("email", user.getUserEmail());
-        resp.put("name", user.getUserName());
+        resp.put("name", user.getName());
         resp.put("avatarUrl", user.getAvatarUrl());
         resp.put("permissions", permissionService.findByUserId(user.getId()));
         return resp;
@@ -61,7 +61,7 @@ public class ProfileController {
 
         User user = userService.findByUserEmail(email);
         if (user != null) {
-            user.setUserName(newName);
+            user.setName(newName);
             user.setUserEmail(newEmail);
 
             user.setAvatarUrl("");

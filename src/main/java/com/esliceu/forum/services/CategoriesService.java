@@ -18,4 +18,8 @@ public class CategoriesService {
     public void save(Category category) {
         categoriesRepo.save(category);
     }
+
+    public Category findByCategoryName(String category) {
+        return categoriesRepo.findByTitle(category);
+    }
 }

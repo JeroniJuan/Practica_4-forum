@@ -17,6 +17,8 @@ public class UserService {
     UserRepo userRepo;
     @Autowired
     PermissionService permissionService;
+    @Autowired
+    TokenService tokenService;
 
     public boolean userAutorized(LoginForm loginForm) throws NoSuchAlgorithmException {
         User user = userRepo.findByUserEmail(loginForm.email());
@@ -26,7 +28,7 @@ public class UserService {
     public boolean register(RegisterForm registerForm) throws NoSuchAlgorithmException {
         if (registerForm.email() == null) return false;
         User user = new User();
-        user.setUserName(registerForm.name());
+        user.setName(registerForm.name());
         user.setUserEmail(registerForm.email());
         user.setUserRole(registerForm.role());
         user.setUserPassword(Utils.getSHA256(registerForm.password()));
@@ -49,5 +51,11 @@ public class UserService {
 
     public void save(User user){
         userRepo.save(user);
+    }
+
+    public User getUserByAuth(String autoritzationHeader){
+        String token = tokenService.getTokenFromHeader(autoritzationHeader);
+        String email = tokenService.verifyAndGetEmailFromToken(token);
+        return findByUserEmail(email);
     }
 }
