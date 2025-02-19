@@ -1,5 +1,6 @@
 package com.esliceu.forum.models;
 
+import com.google.gson.Gson;
 import jakarta.persistence.*;
 
 @Entity
@@ -20,6 +21,8 @@ public class Category {
 
     @Column(name = "color")
     String color;
+
+    String moderators;
 
     public String getTitle() {
         return title;
@@ -59,5 +62,17 @@ public class Category {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int[] getModerators() {
+        return new Gson().fromJson(this.moderators, int[].class);
+    }
+
+    public void setModerators(int[] moderators) {
+        this.moderators = new Gson().toJson(moderators);
+    }
+
+    public void setModerators(String moderators) {
+        this.moderators = moderators;
     }
 }

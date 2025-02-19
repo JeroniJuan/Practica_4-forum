@@ -1,7 +1,10 @@
 package com.esliceu.forum.controllers;
 
 import com.esliceu.forum.forms.ProfileUpdateForm;
+import com.esliceu.forum.models.Category;
+import com.esliceu.forum.models.Permission;
 import com.esliceu.forum.models.User;
+import com.esliceu.forum.services.CategoriesService;
 import com.esliceu.forum.services.PermissionService;
 import com.esliceu.forum.services.TokenService;
 import com.esliceu.forum.services.UserService;
@@ -12,10 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 public class ProfileController {
@@ -27,6 +27,9 @@ public class ProfileController {
 
     @Autowired
     PermissionService permissionService;
+
+    @Autowired
+    CategoriesService categoriesService;
 
     @CrossOrigin
     @GetMapping("/getprofile")
@@ -44,7 +47,10 @@ public class ProfileController {
         resp.put("email", user.getUserEmail());
         resp.put("name", user.getName());
         resp.put("avatarUrl", user.getAvatarUrl());
-        resp.put("permissions", permissionService.findByUserId(user.getId()));
+        Permission permission = permissionService.findByUserId(userService.findByUserEmail(user.getUserEmail()).getId());
+        Map<String, String[]> categories = categoriesService.getCategoryPermissions(user.getId());
+        permission.setCategories(categories);
+        resp.put("permissions", permission);
         return resp;
     }
 
@@ -58,6 +64,7 @@ public class ProfileController {
         String newName = profileUpdateForm.name();
         String newEmail = profileUpdateForm.email();
         String avatar = profileUpdateForm.avatar();
+
 
         User user = userService.findByUserEmail(email);
         if (user != null) {

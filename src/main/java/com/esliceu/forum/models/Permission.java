@@ -3,7 +3,9 @@ package com.esliceu.forum.models;
 import com.google.gson.Gson;
 import jakarta.persistence.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 public class Permission {
@@ -15,6 +17,9 @@ public class Permission {
     @ManyToOne
     @JoinColumn(name = "user_id")
     User user;
+
+    @Transient
+    Map<String, String[]> categories = new HashMap<>();
 
     @Column(name = "root", columnDefinition = "JSON")
     String root;
@@ -42,5 +47,13 @@ public class Permission {
 
     public String[] getRoot() {
         return new Gson().fromJson(this.root, String[].class);
+    }
+
+    public Map<String, String[]> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Map<String, String[]> categories) {
+        this.categories = categories;
     }
 }

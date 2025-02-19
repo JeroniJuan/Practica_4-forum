@@ -27,6 +27,9 @@ public class User {
     @Column(name = "moderate_Category")
     String moderateCategory;
 
+    @Transient
+    String[] permissions;
+
     public int getId() {
         return id;
     }
@@ -81,5 +84,13 @@ public class User {
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
+    }
+
+    public String[] getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(String[] permissions) {
+        this.permissions = permissions;
     }
 }

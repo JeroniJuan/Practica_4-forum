@@ -26,7 +26,7 @@ public class CategoryController {
     TopicService topicService;
 
     @Autowired
-    TokenService tokenService;
+    PermissionService permissionService;
 
     @Autowired
     UserService userService;
@@ -42,7 +42,11 @@ public class CategoryController {
     
     @CrossOrigin
     @PostMapping("/categories")
-    public Category postCategory(@RequestBody CategoryForm categoryForm){
+    public Category postCategory(@RequestBody CategoryForm categoryForm, HttpServletRequest req){
+        String authorizationHeader = req.getHeader("Authorization");
+        User user = userService.getUserByAuth(authorizationHeader);
+        if (user == null) return null;
+
         Category category = new Category();
         category.setDescription(categoryForm.description());
         category.setTitle(categoryForm.title());
@@ -63,6 +67,7 @@ public class CategoryController {
         Category category = categoriesService.findByCategoryName(categoryName);
         category.setTitle(categoryForm.title());
         category.setDescription(categoryForm.description());
+        category.setModerators(new int[0]);
         if (user != null){
             categoriesService.save(category);
             return category;
@@ -75,7 +80,6 @@ public class CategoryController {
         String authorizationHeader = req.getHeader("Authorization");
         User user = userService.getUserByAuth(authorizationHeader);
         if (user != null){
-            System.out.println("Delete by Title = " + categoryName);
             return categoriesService.deleteByTitle(categoryName);
         }
         return false;
@@ -112,7 +116,8 @@ public class CategoryController {
         resposta.put("title", topic.getTitle());
         resposta.put("content", topic.getContent());
         resposta.put("category", topic.getCategory());
-        resposta.put("user", user);
+        topic.getUser().setPermissions(permissionService.findByUserId(topic.getUser().getId()).getRoot());
+        resposta.put("user", topic.getUser());
         resposta.put("replies", replies);
         resposta.put("numberOfReplies", replies.size());
         resposta.put("createdAt", topic.getCreatedAt());
