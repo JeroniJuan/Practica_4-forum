@@ -53,9 +53,24 @@ public class CategoryController {
 
     @CrossOrigin
     @GetMapping("/categories/{categoryName}")
-    public List<Topic> getCategory(@PathVariable String categoryName){
-        return topicService.findTopicsByCategory(categoryName);
+    public Category getCategory(@PathVariable String categoryName){
+        return categoriesService.findByCategoryName(categoryName);
     }
+    @CrossOrigin
+    @PutMapping("/categories/{categoryName}")
+    public Category putCategory(@PathVariable String categoryName, @RequestBody CategoryForm categoryForm, HttpServletRequest req){
+        String authorizationHeader = req.getHeader("Authorization");
+        User user = userService.getUserByAuth(authorizationHeader);
+        Category category = categoriesService.findByCategoryName(categoryName);
+        category.setTitle(categoryForm.title());
+        category.setDescription(categoryForm.description());
+        if (user != null){
+            categoriesService.save(category);
+            return category;
+        }
+        return null;
+    }
+
     @CrossOrigin
     @GetMapping("/categories/{categoryName}/topics")
     public List<Topic> getCategoryTopics(@PathVariable String categoryName){
@@ -158,6 +173,17 @@ public class CategoryController {
     }
 
     @CrossOrigin
+    @DeleteMapping("/topics/{topicId}")
+    public boolean deleteTopic(@PathVariable int topicId, HttpServletRequest req) {
+        String authorizationHeader = req.getHeader("Authorization");
+        User user = userService.getUserByAuth(authorizationHeader);
+        if (user != null){
+            return topicService.deleteById(topicId);
+        }
+        return false;
+    }
+
+        @CrossOrigin
     @PostMapping("/topics")
     public Topic postTopic(@RequestBody TopicForm topicForm, HttpServletRequest req){
         String authorizationHeader = req.getHeader("Authorization");

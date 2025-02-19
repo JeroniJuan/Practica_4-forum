@@ -1,5 +1,6 @@
 package com.esliceu.forum.services;
 
+import com.esliceu.forum.models.Category;
 import com.esliceu.forum.models.Topic;
 import com.esliceu.forum.repos.TopicRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,4 +34,14 @@ public class TopicService {
     public Topic findByLatest() {
         return topicRepo.findFirstByOrderByCreatedAtDesc();
     }
+
+    public boolean deleteById(int id) {
+        if (topicRepo.existsById(id)){
+            topicRepo.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+
+
 }
