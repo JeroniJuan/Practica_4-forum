@@ -23,4 +23,12 @@ public class ReplyService {
     public Reply findByLatest() {
         return replyRepo.findFirstByOrderByCreatedAtDesc();
     }
+
+    public boolean deleteById(int id) {
+        if (replyRepo.existsById(id)){
+            replyRepo.deleteById(id);
+            return true;
+        }
+        return false;
+    }
 }

@@ -76,6 +76,9 @@ public class CategoryController {
         Map<String, Object> resposta = new HashMap<>();
         Topic topic = topicService.findByTopicId(topicId);
         List<Reply> replies = replyService.findByTopicId(topicId);
+        for (Reply reply : replies) {
+            reply.set_id(reply.getId());
+        }
         topic.setViews(topic.getViews()+1);
         topicService.save(topic); // Es guarda amb una view mes.
         resposta.put("views", topic.getViews());
@@ -112,8 +115,18 @@ public class CategoryController {
         reply.setId(reply.get_id());
         return reply;
     }
-//    @CrossOrigin
-//    @DeleteMapping("/topics/{topicId}/replies")
+
+    @CrossOrigin
+    @DeleteMapping("/topics/{topicId}/replies/{replyId}")
+    public boolean deleteTopic(@PathVariable int topicId, @PathVariable int replyId, HttpServletRequest req){
+        String authorizationHeader = req.getHeader("Authorization");
+        User user = userService.getUserByAuth(authorizationHeader);
+        if (user != null){
+            return replyService.deleteById(replyId);
+        }
+
+        return false;
+    }
 
     @CrossOrigin
     @PostMapping("/topics")
