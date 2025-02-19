@@ -1,5 +1,6 @@
 package com.esliceu.forum.models;
 
+import com.google.gson.Gson;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -15,8 +16,8 @@ public class Permission {
     @JoinColumn(name = "user_id")
     User user;
 
-    @Column(name = "root")
-    String[] root;
+    @Column(name = "root", columnDefinition = "JSON")
+    String root;
 
     public User getUser() {
         return user;
@@ -35,11 +36,11 @@ public class Permission {
     }
 
 
-    public String[] getRoot() {
-        return root;
+    public void setRoot(String[] permissions) {
+        this.root = new Gson().toJson(permissions);
     }
 
-    public void setRoot(String[] root) {
-        this.root = root;
+    public String[] getRoot() {
+        return new Gson().fromJson(this.root, String[].class);
     }
 }

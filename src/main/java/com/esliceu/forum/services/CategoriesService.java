@@ -22,4 +22,13 @@ public class CategoriesService {
     public Category findByCategoryName(String category) {
         return categoriesRepo.findByTitle(category);
     }
+
+    public boolean deleteByTitle(String categoryName) {
+        if (categoriesRepo.existsByTitle(categoryName)){
+            Category category = categoriesRepo.findByTitle(categoryName);
+            categoriesRepo.delete(category);
+            return true;
+        }
+        return false;
+    }
 }

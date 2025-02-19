@@ -50,7 +50,6 @@ public class CategoryController {
         categoriesService.save(category);
         return category;
     }
-
     @CrossOrigin
     @GetMapping("/categories/{categoryName}")
     public Category getCategory(@PathVariable String categoryName){
@@ -69,6 +68,17 @@ public class CategoryController {
             return category;
         }
         return null;
+    }
+    @CrossOrigin
+    @DeleteMapping("/categories/{categoryName}")
+    public boolean deleteCategory(@PathVariable String categoryName, HttpServletRequest req){
+        String authorizationHeader = req.getHeader("Authorization");
+        User user = userService.getUserByAuth(authorizationHeader);
+        if (user != null){
+            System.out.println("Delete by Title = " + categoryName);
+            return categoriesService.deleteByTitle(categoryName);
+        }
+        return false;
     }
 
     @CrossOrigin
@@ -139,7 +149,6 @@ public class CategoryController {
         if (user != null){
             return replyService.deleteById(replyId);
         }
-
         return false;
     }
     @CrossOrigin

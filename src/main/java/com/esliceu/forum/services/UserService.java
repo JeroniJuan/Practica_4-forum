@@ -25,7 +25,7 @@ public class UserService {
         return user.getUserPassword().equals(Utils.getSHA256(loginForm.password()));
     }
 
-    public boolean register(RegisterForm registerForm) throws NoSuchAlgorithmException {
+    public boolean  register(RegisterForm registerForm) throws NoSuchAlgorithmException {
         if (registerForm.email() == null) return false;
         User user = new User();
         user.setName(registerForm.name());
