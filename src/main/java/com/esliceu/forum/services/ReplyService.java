@@ -31,4 +31,8 @@ public class ReplyService {
         }
         return false;
     }
+
+    public Reply findById(int replyId) {
+        return replyRepo.findById(replyId).orElse(null);
+    }
 }

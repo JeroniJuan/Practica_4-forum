@@ -127,6 +127,19 @@ public class CategoryController {
 
         return false;
     }
+    @CrossOrigin
+    @PutMapping("/topics/{topicId}/replies/{replyId}")
+    public Reply putReply(@PathVariable int topicId, @PathVariable int replyId, HttpServletRequest req, @RequestBody ReplyForm replyForm){
+        String authorizationHeader = req.getHeader("Authorization");
+        User user = userService.getUserByAuth(authorizationHeader);
+        Reply reply = replyService.findById(replyId);
+        reply.setContent(replyForm.content());
+        if (user != null){
+            replyService.save(reply);
+            return reply;
+        }
+        return null;
+    }
 
     @CrossOrigin
     @PostMapping("/topics")
