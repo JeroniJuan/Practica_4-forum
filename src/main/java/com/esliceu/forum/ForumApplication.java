@@ -21,7 +21,7 @@ public class ForumApplication implements WebMvcConfigurer {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(tokenInterceptor)
-				.addPathPatterns("/topic");
+				.addPathPatterns("");
 	}
 
 }

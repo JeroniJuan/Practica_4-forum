@@ -134,9 +134,25 @@ public class CategoryController {
         User user = userService.getUserByAuth(authorizationHeader);
         Reply reply = replyService.findById(replyId);
         reply.setContent(replyForm.content());
-        if (user != null){
+        if (user == reply.getUser()){
             replyService.save(reply);
             return reply;
+        }
+        return null;
+    }
+
+    @CrossOrigin
+    @PutMapping("/topics/{topicId}")
+    public Topic putTopic(@PathVariable int topicId, HttpServletRequest req, @RequestBody TopicForm topicForm){
+        String authorizationHeader = req.getHeader("Authorization");
+        User user = userService.getUserByAuth(authorizationHeader);
+        Topic topic = topicService.findByTopicId(topicId);
+        topic.setContent(topicForm.content());
+        topic.setTitle(topicForm.title());
+        topic.setCategory(categoriesService.findByCategoryName(topicForm.category()));
+        if (user != null){
+            topicService.save(topic);
+            return topic;
         }
         return null;
     }
