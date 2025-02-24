@@ -32,7 +32,17 @@ public class ReplyService {
         return false;
     }
 
+    public boolean deleteByTopicId(int topicId) {
+        List<Reply> replies = replyRepo.findByTopicId(topicId);
+        for (Reply reply : replies) {
+            replyRepo.deleteById(reply.getId());
+        }
+        return true;
+    }
+
+
     public Reply findById(int replyId) {
         return replyRepo.findById(replyId).orElse(null);
     }
+
 }

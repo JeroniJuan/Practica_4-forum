@@ -1,6 +1,7 @@
 package com.esliceu.forum.services;
 
 import com.esliceu.forum.models.Category;
+import com.esliceu.forum.models.Topic;
 import com.esliceu.forum.repos.CategoriesRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,13 @@ import java.util.Map;
 public class CategoriesService {
     @Autowired
     CategoriesRepo categoriesRepo;
+
+    @Autowired
+    TopicService topicService;
+
+    @Autowired
+    ReplyService replyService;
+
     public List<Category> findAll() {
         return categoriesRepo.findAll();
     }
@@ -29,11 +37,20 @@ public class CategoriesService {
     public boolean deleteByTitle(String categoryName) {
         if (categoriesRepo.existsByTitle(categoryName)){
             Category category = categoriesRepo.findByTitle(categoryName);
+
+
+            List<Topic> topics = topicService.findTopicsByCategory(categoryName);
+            for (Topic topic : topics) {
+                replyService.deleteByTopicId(topic.getId());
+                topicService.deleteById(topic.getId());
+            }
+
             categoriesRepo.delete(category);
             return true;
         }
         return false;
     }
+
 
     public Map<String, String[]> getCategoryPermissions(int userId) {
         Map<String, String[]> categoryPermissions = new HashMap<>();

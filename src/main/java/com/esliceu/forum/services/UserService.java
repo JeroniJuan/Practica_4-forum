@@ -69,6 +69,22 @@ public class UserService {
         }
         return true;
     }
+
+    public boolean hasPermissionToCategory(User user, String categoryName) {
+        if (user == null) return false;
+
+        if ("admin".equals(user.getUserRole())) {
+            return true;
+        }
+
+        if ("moderator".equals(user.getUserRole()) && categoryName.equals(user.getModerateCategory())) {
+            return true;
+        }
+
+        return false;
+    }
+
+
     public User findByUserEmail(String email){
         return userRepo.findByUserEmail(email);
     }

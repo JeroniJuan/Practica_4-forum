@@ -9,4 +9,6 @@ public interface ReplyRepo extends JpaRepository<Reply, Integer> {
     List<Reply> findByTopicId(int topicId);
 
     Reply findFirstByOrderByCreatedAtDesc();
+
+    void deleteByTopicId(int id);
 }

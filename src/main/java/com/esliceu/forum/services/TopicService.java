@@ -13,6 +13,9 @@ public class TopicService {
     @Autowired
     private TopicRepo topicRepo;
 
+    @Autowired
+    ReplyService replyService;
+
     public List<Topic> findTopicsByCategory(String categoryTitle){
         List<Topic> topicList = topicRepo.findByCategoryTitle(categoryTitle);
         for (Topic topic : topicList) {
@@ -36,11 +39,18 @@ public class TopicService {
     }
 
     public boolean deleteById(int id) {
-        if (topicRepo.existsById(id)){
+        if (topicRepo.existsById(id)) {
+            replyService.deleteByTopicId(id);
             topicRepo.deleteById(id);
             return true;
         }
         return false;
+    }
+
+
+    public String findCategoryByTopicId(int topicId) {
+        Topic topic = topicRepo.findById(topicId).orElse(null);
+        return (topic != null) ? topic.getCategory().getTitle() : null;
     }
 
 
