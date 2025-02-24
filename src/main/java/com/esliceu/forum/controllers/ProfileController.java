@@ -31,7 +31,7 @@ public class ProfileController {
     @Autowired
     CategoriesService categoriesService;
 
-    @CrossOrigin
+    
     @GetMapping("/getprofile")
     public Map<String, Object> getProfile(HttpServletRequest req){
         Map<String, Object> resp = new HashMap<>();
@@ -54,7 +54,7 @@ public class ProfileController {
         return resp;
     }
 
-    @CrossOrigin
+    
     @PutMapping("/profile")
     public void putProfile(HttpServletRequest req, @RequestBody ProfileUpdateForm profileUpdateForm){
         String authorizationHeader = req.getHeader("Authorization");

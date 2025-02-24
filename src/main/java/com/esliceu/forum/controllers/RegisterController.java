@@ -17,7 +17,6 @@ public class RegisterController {
     @Autowired
     UserService userService;
 
-    @CrossOrigin
     @PostMapping("/register")
     Map<String, String> register(@RequestBody RegisterForm registerForm) throws NoSuchAlgorithmException {
         if (userService.register(registerForm)){

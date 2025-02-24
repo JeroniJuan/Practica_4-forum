@@ -34,13 +34,13 @@ public class CategoryController {
     @Autowired
     ReplyService replyService;
 
-    @CrossOrigin
+    
     @GetMapping("/categories")
     public List<Category> getCategories(){
         return categoriesService.findAll();
     }
     
-    @CrossOrigin
+    
     @PostMapping("/categories")
     public Category postCategory(@RequestBody CategoryForm categoryForm, HttpServletRequest req){
         String authorizationHeader = req.getHeader("Authorization");
@@ -54,12 +54,12 @@ public class CategoryController {
         categoriesService.save(category);
         return category;
     }
-    @CrossOrigin
+    
     @GetMapping("/categories/{categoryName}")
     public Category getCategory(@PathVariable String categoryName){
         return categoriesService.findByCategoryName(categoryName);
     }
-    @CrossOrigin
+    
     @PutMapping("/categories/{categoryName}")
     public Category putCategory(@PathVariable String categoryName, @RequestBody CategoryForm categoryForm, HttpServletRequest req){
         String authorizationHeader = req.getHeader("Authorization");
@@ -74,7 +74,7 @@ public class CategoryController {
         }
         return null;
     }
-    @CrossOrigin
+    
     @DeleteMapping("/categories/{categoryName}")
     public boolean deleteCategory(@PathVariable String categoryName, HttpServletRequest req){
         String authorizationHeader = req.getHeader("Authorization");
@@ -85,19 +85,19 @@ public class CategoryController {
         return false;
     }
 
-    @CrossOrigin
+    
     @GetMapping("/categories/{categoryName}/topics")
     public List<Topic> getCategoryTopics(@PathVariable String categoryName){
         return topicService.findTopicsByCategory(categoryName);
     }
 
-    @CrossOrigin
+    
     @GetMapping("/categories/{categoryName}/{topicName}")
     public void getCategoryTopic(@PathVariable String categoryName, @PathVariable String topicName){
 
     }
 
-    @CrossOrigin
+    
     @GetMapping("/topics/{topicId}")
     public Map<String, Object> getTopic(@PathVariable int topicId, HttpServletRequest req){
         String authorizationHeader = req.getHeader("Authorization");
@@ -126,7 +126,7 @@ public class CategoryController {
         return resposta;
     }
 
-    @CrossOrigin
+    
     @PostMapping("/topics/{topicId}/replies")
     public Reply postReply(@PathVariable int topicId, @RequestBody ReplyForm replyForm, HttpServletRequest req){
         String authorizationHeader = req.getHeader("Authorization");
@@ -146,7 +146,7 @@ public class CategoryController {
         return reply;
     }
 
-    @CrossOrigin
+    
     @DeleteMapping("/topics/{topicId}/replies/{replyId}")
     public boolean deleteTopic(@PathVariable int topicId, @PathVariable int replyId, HttpServletRequest req){
         String authorizationHeader = req.getHeader("Authorization");
@@ -156,7 +156,7 @@ public class CategoryController {
         }
         return false;
     }
-    @CrossOrigin
+    
     @PutMapping("/topics/{topicId}/replies/{replyId}")
     public Reply putReply(@PathVariable int topicId, @PathVariable int replyId, HttpServletRequest req, @RequestBody ReplyForm replyForm){
         String authorizationHeader = req.getHeader("Authorization");
@@ -170,7 +170,7 @@ public class CategoryController {
         return null;
     }
 
-    @CrossOrigin
+    
     @PutMapping("/topics/{topicId}")
     public Topic putTopic(@PathVariable int topicId, HttpServletRequest req, @RequestBody TopicForm topicForm){
         String authorizationHeader = req.getHeader("Authorization");
@@ -186,7 +186,7 @@ public class CategoryController {
         return null;
     }
 
-    @CrossOrigin
+    
     @DeleteMapping("/topics/{topicId}")
     public boolean deleteTopic(@PathVariable int topicId, HttpServletRequest req) {
         String authorizationHeader = req.getHeader("Authorization");
@@ -196,8 +196,7 @@ public class CategoryController {
         }
         return false;
     }
-
-        @CrossOrigin
+        
     @PostMapping("/topics")
     public Topic postTopic(@RequestBody TopicForm topicForm, HttpServletRequest req){
         String authorizationHeader = req.getHeader("Authorization");

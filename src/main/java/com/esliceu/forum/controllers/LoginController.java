@@ -23,7 +23,7 @@ public class LoginController {
 
     @Autowired
     PermissionService permissionService;
-    @CrossOrigin
+
     @PostMapping("/login")
     Map<String, Object> login(@RequestBody LoginForm loginForm) throws NoSuchAlgorithmException {
         if (userService.userAutorized(loginForm)){
