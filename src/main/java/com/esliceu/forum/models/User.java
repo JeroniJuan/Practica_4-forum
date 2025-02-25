@@ -2,6 +2,8 @@ package com.esliceu.forum.models;
 
 import jakarta.persistence.*;
 
+import java.util.Map;
+
 @Entity
 public class User {
     @Id
@@ -28,7 +30,7 @@ public class User {
     String moderateCategory;
 
     @Transient
-    String[] permissions;
+    private Map<String, Object> permissions;
 
     public int getId() {
         return id;
@@ -86,11 +88,11 @@ public class User {
         this.avatarUrl = avatarUrl;
     }
 
-    public String[] getPermissions() {
+    public Map<String, Object> getPermissions() {
         return permissions;
     }
 
-    public void setPermissions(String[] permissions) {
+    public void setPermissions(Map<String, Object> permissions) {
         this.permissions = permissions;
     }
 }

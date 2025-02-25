@@ -79,9 +79,11 @@ public class CategoryController {
 
     @GetMapping("/categories/{categoryName}")
     public Category getCategory(@PathVariable String categoryName) {
-        System.out.println("====== Agafant categoria");
-        System.out.println(categoriesService.findByCategoryName(categoryName).getTitle());
-        return categoriesService.findByCategoryName(categoryName);
+        Category category = categoriesService.findByCategoryName(categoryName);
+        if (category.getModerators() == null){
+            category.setModerators(new int[0]);
+        }
+        return category;
     }
 
 
@@ -112,7 +114,6 @@ public class CategoryController {
         resposta.put("content", topic.getContent());
         resposta.put("category", topic.getCategory());
         resposta.put("replies", replies);
-        topic.getUser().setPermissions(permissionService.findByUserId(topic.getUser().getId()).getRoot());
         resposta.put("user", topic.getUser());
         resposta.put("createdAt", topic.getCreatedAt());
         resposta.put("updatedAt", topic.getUpdatedAt());

@@ -5,10 +5,13 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.esliceu.forum.models.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class TokenService {
@@ -18,20 +21,40 @@ public class TokenService {
     @Value("${token.expiration.time}")
     long tokenExpirationTime;
 
-    public String buildToken(String s){
+    public String buildToken(User user) {
         return JWT.create()
-                .withSubject(s)
+                .withSubject(user.getUserEmail())
+                .withClaim("id", user.getId())
+                .withClaim("_id", user.getId())
+                .withClaim("__v", 0)
+                .withClaim("name", user.getName())
+                .withClaim("role", user.getUserRole())
+                .withClaim("avatarUrl", user.getAvatarUrl())
+                .withClaim("moderateCategory", user.getModerateCategory())
+                .withClaim("permissions", user.getPermissions())
                 .withExpiresAt(new Date(System.currentTimeMillis() + tokenExpirationTime))
                 .sign(Algorithm.HMAC512(secret.getBytes()));
     }
 
-    public String verifyAndGetEmailFromToken(String token) {
-        var decoded = JWT.require(Algorithm.HMAC512(secret.getBytes()))
+    public User verifyAndGetUserFromToken(String token) {
+        DecodedJWT decoded = JWT.require(Algorithm.HMAC512(secret.getBytes()))
                 .build()
                 .verify(token);
-        String s = decoded.getClaim("permisos").asString();
-        return decoded.getSubject();
+
+        User user = new User();
+        user.setId(decoded.getClaim("id").asInt());
+        user.setName(decoded.getClaim("name").asString());
+        user.setUserEmail(decoded.getSubject());
+        user.setUserRole(decoded.getClaim("role").asString());
+        user.setAvatarUrl(decoded.getClaim("avatarUrl").asString());
+        user.setModerateCategory(decoded.getClaim("moderateCategory").asString());
+
+        Map<String, Object> permissions = decoded.getClaim("permissions").asMap();
+        user.setPermissions(permissions);
+
+        return user;
     }
+
     public String getTokenFromHeader(String string) {
         if (string == null) return null;
         if (!string.startsWith("Bearer ")) return null;

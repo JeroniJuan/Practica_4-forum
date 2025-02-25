@@ -26,27 +26,32 @@ public class LoginController {
 
     @PostMapping("/login")
     Map<String, Object> login(@RequestBody LoginForm loginForm) throws NoSuchAlgorithmException {
-        if (userService.userAutorized(loginForm)){
+        if (userService.userAutorized(loginForm)) {
             Map<String, Object> response = new HashMap<>();
             User user = userService.findByUserEmail(loginForm.email());
 
-            String token = tokenService.buildToken(loginForm.email());
-            Permission permission = permissionService.findByUserId(userService.findByUserEmail(user.getUserEmail()).getId());
-            try{
-                user.setPermissions(permission.getRoot());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+            Map<String, Object> permissions = new HashMap<>();
+            permissions.put("root", permissionService.findByUserId(user.getId()).getRoot());
+
+            if (user.getModerateCategory() != null) {
+                Map<String, String[]> categories = new HashMap<>();
+                categories.put(user.getModerateCategory(), new String[]{
+                        "categories_topics:write",
+                        "categories_topics:delete",
+                        "categories_replies:write",
+                        "categories_replies:delete"
+                });
+                permissions.put("categories", categories);
             }
 
-            if (user.getPermissions() == null){
-                String[] perms = new String[0];
-                user.setPermissions(perms);
-            }
-            response.put("user", user);
+            user.setPermissions(permissions);
+
+            String token = tokenService.buildToken(user);
+
             response.put("token", token);
+            response.put("user", user);
             return response;
         }
-        System.out.println("False");
         return null;
     }
 

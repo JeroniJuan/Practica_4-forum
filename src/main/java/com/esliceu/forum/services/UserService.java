@@ -30,6 +30,7 @@ public class UserService {
 
     public boolean  register(RegisterForm registerForm) throws NoSuchAlgorithmException {
         if (registerForm.email() == null) return false;
+        if (userRepo.findByUserEmail(registerForm.email()) != null) return false;
         User user = new User();
         user.setName(registerForm.name());
         user.setUserEmail(registerForm.email());
@@ -63,7 +64,7 @@ public class UserService {
             permission.setRoot(permissions);
             permissionService.save(permission);
         }else{
-            String[] permissions = {};
+            String[] permissions = {"own_topics:write", "own_topics:delete", "own_replies:write", "own_replies:delete"};
             permission.setRoot(permissions);
             permissionService.save(permission);
         }
@@ -95,7 +96,7 @@ public class UserService {
 
     public User getUserByAuth(String autoritzationHeader){
         String token = tokenService.getTokenFromHeader(autoritzationHeader);
-        String email = tokenService.verifyAndGetEmailFromToken(token);
+        String email = tokenService.verifyAndGetUserFromToken(token).getUserEmail();
         return findByUserEmail(email);
     }
 }
