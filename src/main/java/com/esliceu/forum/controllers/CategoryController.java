@@ -56,14 +56,13 @@ public class CategoryController {
         String authorizationHeader = req.getHeader("Authorization");
         User user = userService.getUserByAuth(authorizationHeader);
         Category category = categoriesService.findByCategoryName(categoryName);
-
         if (user == null || !userService.hasPermissionToCategory(user, categoryName)) {
             return null;
         }
 
         category.setTitle(categoryForm.title());
         category.setDescription(categoryForm.description());
-        category.setModerators(new int[0]);
+        category.setSlug(categoryForm.title());
         categoriesService.save(category);
         return category;
     }
@@ -80,6 +79,8 @@ public class CategoryController {
 
     @GetMapping("/categories/{categoryName}")
     public Category getCategory(@PathVariable String categoryName) {
+        System.out.println("====== Agafant categoria");
+        System.out.println(categoriesService.findByCategoryName(categoryName).getTitle());
         return categoriesService.findByCategoryName(categoryName);
     }
 
