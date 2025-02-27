@@ -11,6 +11,9 @@ public class User {
     @Column(name = "user_id")
     private int id;
 
+    @Transient
+    int _id;
+
     @Column(name = "user_name")
     String name;
 
@@ -18,7 +21,7 @@ public class User {
     String userPassword;
 
     @Column(name = "user_email")
-    String userEmail;
+    String email;
 
     @Column(name = "user_role")
     String userRole;
@@ -56,12 +59,12 @@ public class User {
         this.userPassword = userPassword;
     }
 
-    public String getUserEmail() {
-        return userEmail;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
+    public void setEmail(String userEmail) {
+        this.email = userEmail;
     }
 
     public String getUserRole() {
@@ -94,5 +97,13 @@ public class User {
 
     public void setPermissions(Map<String, Object> permissions) {
         this.permissions = permissions;
+    }
+
+    public int get_id() {
+        return _id;
+    }
+
+    public void set_id(int _id) {
+        this._id = _id;
     }
 }

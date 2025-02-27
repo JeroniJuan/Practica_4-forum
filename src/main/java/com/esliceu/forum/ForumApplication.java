@@ -17,12 +17,6 @@ public class ForumApplication implements WebMvcConfigurer {
 	}
 
 	@Override
-	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(tokenInterceptor)
-				.addPathPatterns("/profile");
-	}
-
-	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
 				.allowedOrigins("http://localhost:8080")

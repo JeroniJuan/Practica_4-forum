@@ -41,6 +41,9 @@ public class CategoryController {
     public Category postCategory(@RequestBody CategoryForm categoryForm, HttpServletRequest req){
         String authorizationHeader = req.getHeader("Authorization");
         User user = userService.getUserByAuth(authorizationHeader);
+        if (categoriesService.findByCategoryName(categoryForm.title()) != null) {
+            return categoriesService.findByCategoryName(categoryForm.title());
+        }
         if (user == null || !userService.hasPermissionToCategory(user, categoryForm.title())) return null;
 
         Category category = new Category();
@@ -80,6 +83,7 @@ public class CategoryController {
     @GetMapping("/categories/{categoryName}")
     public Category getCategory(@PathVariable String categoryName) {
         Category category = categoriesService.findByCategoryName(categoryName);
+        category.set_id(category.get_id());
         if (category.getModerators() == null){
             category.setModerators(new int[0]);
         }
@@ -93,9 +97,7 @@ public class CategoryController {
     }
 
     @GetMapping("/topics/{topicId}")
-    public Map<String, Object> getTopic(@PathVariable int topicId, HttpServletRequest req){
-        String authorizationHeader = req.getHeader("Authorization");
-        User user = userService.getUserByAuth(authorizationHeader);
+    public Map<String, Object> getTopic(@PathVariable int topicId){
         Map<String, Object> resposta = new HashMap<>();
         Topic topic = topicService.findByTopicId(topicId);
 
@@ -105,6 +107,7 @@ public class CategoryController {
         List<Reply> replies = replyService.findByTopicId(topicId);
         for (Reply reply : replies) {
             reply.set_id(reply.getId());
+            reply.getUser().set_id(reply.getUser().getId());
         }
 
         resposta.put("views", topic.getViews());
@@ -112,9 +115,13 @@ public class CategoryController {
         resposta.put("id", topic.getId());
         resposta.put("title", topic.getTitle());
         resposta.put("content", topic.getContent());
-        resposta.put("category", topic.getCategory());
+        Category category = topic.getCategory();
+        category.set_id(category.getId());
+        resposta.put("category", category);
         resposta.put("replies", replies);
-        resposta.put("user", topic.getUser());
+        User user = topic.getUser();
+        user.set_id(user.getId());
+        resposta.put("user", user);
         resposta.put("createdAt", topic.getCreatedAt());
         resposta.put("updatedAt", topic.getUpdatedAt());
 
@@ -126,15 +133,16 @@ public class CategoryController {
         String authorizationHeader = req.getHeader("Authorization");
         User user = userService.getUserByAuth(authorizationHeader);
         Topic topic = topicService.findByTopicId(topicId);
-        String topicCategory = topic.getCategory().getTitle();
+        user.set_id(user.getId());
 
-        if (user == null || !userService.hasPermissionToCategory(user, topicCategory)) {
+        if (user == null || !userService.hasPermissionToCategory(user, topic.getCategory().getTitle())) {
             return null;
         }
 
         topic.setContent(topicForm.content());
         topic.setTitle(topicForm.title());
         topic.setCategory(categoriesService.findByCategoryName(topicForm.category()));
+        topic.getCategory().set_id(topic.getCategory().getId());
         topicService.save(topic);
         return topic;
     }
@@ -162,11 +170,11 @@ public class CategoryController {
         String authorizationHeader = req.getHeader("Authorization");
         User user = userService.getUserByAuth(authorizationHeader);
         Category category = categoriesService.findByCategoryName(topicForm.category());
-
+        category.set_id(category.getId());
         if (user == null || !userService.hasPermissionToCategory(user, topicForm.category())) {
             return null;
         }
-
+        user.set_id(user.getId());
         Topic topic = new Topic();
         topic.setCategory(category);
         topic.setContent(topicForm.content());
@@ -176,6 +184,8 @@ public class CategoryController {
         topic.setNumberOfReplies(0);
 
         topicService.save(topic);
+        topic = topicService.findByLatest();
+        topic.set_id(topic.getId());
         return topic;
     }
 
@@ -196,6 +206,7 @@ public class CategoryController {
     public Reply postReply(@PathVariable int topicId, @RequestBody ReplyForm replyForm, HttpServletRequest req){
         String authorizationHeader = req.getHeader("Authorization");
         User user = userService.getUserByAuth(authorizationHeader);
+        user.set_id(user.getId());
         Topic topic = topicService.findByTopicId(topicId);
         Reply reply = new Reply();
         reply.setContent(replyForm.content());

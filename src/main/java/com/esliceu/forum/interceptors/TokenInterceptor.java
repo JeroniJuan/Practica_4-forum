@@ -10,9 +10,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Component
 public class TokenInterceptor implements HandlerInterceptor {
     @Autowired
@@ -27,7 +24,7 @@ public class TokenInterceptor implements HandlerInterceptor {
         }
         String email;
         try {
-            email = tokenService.verifyAndGetUserFromToken(tok).getUserEmail();
+            email = tokenService.verifyAndGetUserFromToken(tok).getEmail();
         }catch (JWTDecodeException jwtDecodeException){
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return false;

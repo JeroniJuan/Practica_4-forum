@@ -53,5 +53,4 @@ public class TopicService {
         return (topic != null) ? topic.getCategory().getTitle() : null;
     }
 
-
 }

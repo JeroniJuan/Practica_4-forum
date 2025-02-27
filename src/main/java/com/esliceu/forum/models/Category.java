@@ -10,6 +10,9 @@ public class Category {
     @Column(name = "category_id")
     private int id;
 
+    @Transient
+    int _id;
+
     @Column(name = "title")
     String title;
 
@@ -74,5 +77,13 @@ public class Category {
 
     public void setModerators(String moderators) {
         this.moderators = moderators;
+    }
+
+    public int get_id() {
+        return _id;
+    }
+
+    public void set_id(int _id) {
+        this._id = _id;
     }
 }

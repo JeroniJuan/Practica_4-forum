@@ -1,16 +1,13 @@
 package com.esliceu.forum.services;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.esliceu.forum.models.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -23,7 +20,7 @@ public class TokenService {
 
     public String buildToken(User user) {
         return JWT.create()
-                .withSubject(user.getUserEmail())
+                .withClaim("email", user.getEmail())
                 .withClaim("id", user.getId())
                 .withClaim("_id", user.getId())
                 .withClaim("__v", 0)
@@ -44,7 +41,7 @@ public class TokenService {
         User user = new User();
         user.setId(decoded.getClaim("id").asInt());
         user.setName(decoded.getClaim("name").asString());
-        user.setUserEmail(decoded.getSubject());
+        user.setEmail(decoded.getClaim("email").asString());
         user.setUserRole(decoded.getClaim("role").asString());
         user.setAvatarUrl(decoded.getClaim("avatarUrl").asString());
         user.setModerateCategory(decoded.getClaim("moderateCategory").asString());

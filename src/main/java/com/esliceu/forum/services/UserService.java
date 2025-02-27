@@ -24,16 +24,17 @@ public class UserService {
     CategoriesService categoriesService;
 
     public boolean userAutorized(LoginForm loginForm) throws NoSuchAlgorithmException {
-        User user = userRepo.findByUserEmail(loginForm.email());
+        User user = userRepo.findByEmail(loginForm.email());
+        if (user == null) return false;
         return user.getUserPassword().equals(Utils.getSHA256(loginForm.password()));
     }
 
     public boolean  register(RegisterForm registerForm) throws NoSuchAlgorithmException {
         if (registerForm.email() == null) return false;
-        if (userRepo.findByUserEmail(registerForm.email()) != null) return false;
+        if (userRepo.findByEmail(registerForm.email()) != null) return false;
         User user = new User();
         user.setName(registerForm.name());
-        user.setUserEmail(registerForm.email());
+        user.setEmail(registerForm.email());
         user.setUserRole(registerForm.role());
         user.setUserPassword(Utils.getSHA256(registerForm.password()));
         if (registerForm.moderateCategory() != null){
@@ -41,7 +42,7 @@ public class UserService {
         }
         userRepo.save(user);
         Permission permission = new Permission();
-        permission.setUser(userRepo.findByUserEmail(registerForm.email()));
+        permission.setUser(userRepo.findByEmail(registerForm.email()));
         if (registerForm.role().equals("admin")){
             String[] adminPermissions = {"own_topics:write", "own_topics:delete", "own_replies:write", "own_replies:delete", "categories:write", "categories:delete"};
             permission.setRoot(adminPermissions);
@@ -52,11 +53,11 @@ public class UserService {
             int[] newModerators;
             if (moderators == null) {
                 newModerators = new int[1];
-                newModerators[0] = userRepo.findByUserEmail(user.getUserEmail()).getId();
+                newModerators[0] = userRepo.findByEmail(user.getEmail()).getId();
             }else{
                 newModerators = new int[moderators.length+1];
                 System.arraycopy(moderators, 0, newModerators, 0, moderators.length);
-                newModerators[newModerators.length-1] = userRepo.findByUserEmail(user.getUserEmail()).getId();
+                newModerators[newModerators.length-1] = userRepo.findByEmail(user.getEmail()).getId();
             }
             category.setModerators(newModerators);
             categoriesService.save(category);
@@ -87,7 +88,7 @@ public class UserService {
 
 
     public User findByUserEmail(String email){
-        return userRepo.findByUserEmail(email);
+        return userRepo.findByEmail(email);
     }
 
     public void save(User user){
@@ -96,7 +97,7 @@ public class UserService {
 
     public User getUserByAuth(String autoritzationHeader){
         String token = tokenService.getTokenFromHeader(autoritzationHeader);
-        String email = tokenService.verifyAndGetUserFromToken(token).getUserEmail();
+        String email = tokenService.verifyAndGetUserFromToken(token).getEmail();
         return findByUserEmail(email);
     }
 }
