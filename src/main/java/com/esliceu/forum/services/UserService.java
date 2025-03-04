@@ -48,7 +48,7 @@ public class UserService {
             permission.setRoot(adminPermissions);
             permissionService.save(permission);
         } else if (registerForm.role().equals("moderator")) {
-            Category category = categoriesService.findByCategoryName(registerForm.moderateCategory());
+            Category category = categoriesService.findByCategorySlug(registerForm.moderateCategory());
             int[] moderators = category.getModerators();
             int[] newModerators;
             if (moderators == null) {

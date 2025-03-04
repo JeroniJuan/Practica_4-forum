@@ -10,4 +10,6 @@ public interface CategoriesRepo extends JpaRepository<Category, Integer> {
     boolean existsByTitle(String categoryName);
 
     void deleteByTitle(String categoryName);
+
+    Category findBySlug(String category);
 }

@@ -41,15 +41,22 @@ public class CategoryController {
     public Category postCategory(@RequestBody CategoryForm categoryForm, HttpServletRequest req){
         String authorizationHeader = req.getHeader("Authorization");
         User user = userService.getUserByAuth(authorizationHeader);
-        if (categoriesService.findByCategoryName(categoryForm.title()) != null) {
-            return categoriesService.findByCategoryName(categoryForm.title());
-        }
+
         if (user == null || !userService.hasPermissionToCategory(user, categoryForm.title())) return null;
 
         Category category = new Category();
         category.setDescription(categoryForm.description());
         category.setTitle(categoryForm.title());
-        category.setSlug(categoryForm.title());
+
+        String title = categoryForm.title();
+        int counter = 2;
+
+        while (categoriesService.findByCategorySlug(title) != null) {
+            title = categoryForm.title() + "-" + counter;
+            counter++;
+        }
+        category.setSlug(title);
+
         categoriesService.save(category);
         return category;
     }
@@ -58,7 +65,7 @@ public class CategoryController {
     public Category putCategory(@PathVariable String categoryName, @RequestBody CategoryForm categoryForm, HttpServletRequest req){
         String authorizationHeader = req.getHeader("Authorization");
         User user = userService.getUserByAuth(authorizationHeader);
-        Category category = categoriesService.findByCategoryName(categoryName);
+        Category category = categoriesService.findByCategorySlug(categoryName);
         if (user == null || !userService.hasPermissionToCategory(user, categoryName)) {
             return null;
         }
@@ -82,7 +89,7 @@ public class CategoryController {
 
     @GetMapping("/categories/{categoryName}")
     public Category getCategory(@PathVariable String categoryName) {
-        Category category = categoriesService.findByCategoryName(categoryName);
+        Category category = categoriesService.findByCategorySlug(categoryName);
         category.set_id(category.get_id());
         if (category.getModerators() == null){
             category.setModerators(new int[0]);
@@ -141,7 +148,7 @@ public class CategoryController {
 
         topic.setContent(topicForm.content());
         topic.setTitle(topicForm.title());
-        topic.setCategory(categoriesService.findByCategoryName(topicForm.category()));
+        topic.setCategory(categoriesService.findByCategorySlug(topicForm.category()));
         topic.getCategory().set_id(topic.getCategory().getId());
         topicService.save(topic);
         return topic;
@@ -169,9 +176,9 @@ public class CategoryController {
     public Topic postTopic(@RequestBody TopicForm topicForm, HttpServletRequest req){
         String authorizationHeader = req.getHeader("Authorization");
         User user = userService.getUserByAuth(authorizationHeader);
-        Category category = categoriesService.findByCategoryName(topicForm.category());
+        Category category = categoriesService.findByCategorySlug(topicForm.category());
         category.set_id(category.getId());
-        if (user == null || !userService.hasPermissionToCategory(user, topicForm.category())) {
+        if (user == null) {
             return null;
         }
         user.set_id(user.getId());

@@ -34,6 +34,10 @@ public class CategoriesService {
         return categoriesRepo.findByTitle(category);
     }
 
+    public Category findByCategorySlug(String category) {
+        return categoriesRepo.findBySlug(category);
+    }
+
     public boolean deleteByTitle(String categoryName) {
         if (categoriesRepo.existsByTitle(categoryName)){
             Category category = categoriesRepo.findByTitle(categoryName);
